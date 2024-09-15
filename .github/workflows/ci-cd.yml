@@ -22,5 +22,5 @@ jobs:
             source venv/bin/activate
             pip install -r requirements.txt
             echo $SSH_PASSWORD | sudo -S systemctl restart manhwarepo
-            echo $SSH_PASSWORD | sudo -S systemctl restart gunicorn
+            echo $SSH_PASSWORD | sudo -S systemctl restart nginx
           EOF
