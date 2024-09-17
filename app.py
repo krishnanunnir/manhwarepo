@@ -5,6 +5,7 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 from dotenv import load_dotenv
 from flask import Flask, jsonify, make_response, render_template, request
 from supabase import Client, create_client
+from utils import create_manhwa_list, get_manhwa_details_by_list_slug
 
 # Load environment variables
 load_dotenv()
@@ -92,6 +93,42 @@ def sitemap():
     response = make_response(xml_string)
     response.headers["Content-Type"] = "application/xml"
     return response
+
+
+@app.route("/create-list", methods=["POST"])
+def create_list():
+    data = request.json
+    manhwa_names = data.get("manhwa_names", [])
+    list_title = data.get("list_title", "")
+    list_description = data.get("list_description", "")
+
+    if not manhwa_names or not list_title:
+        return jsonify({"error": "Manhwa names and list title are required"}), 400
+
+    try:
+        list_id = create_manhwa_list(manhwa_names, list_title, list_description)
+        return jsonify({"success": True, "list_id": list_id}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/list/<string:list_slug>")
+def render_by_list_slug(list_slug):
+    manhwa_list = get_manhwa_details_by_list_slug(list_slug)
+
+    if not manhwa_list:
+        return render_template("404.html"), 404
+
+    return render_template(
+        "index.html",
+        title=f"Manhwa List: {list_slug}",
+        manhwa_list=manhwa_list,
+    )
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
 
 
 if __name__ == "__main__":
