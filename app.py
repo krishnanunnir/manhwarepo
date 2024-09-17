@@ -21,7 +21,7 @@ def index():
     manhwa_list = response.data
 
     # Render the template with the fetched data
-    return render_template("index.html", manhwa_list=manhwa_list)
+    return render_template("index.html", title="Manhwa", manhwa_list=manhwa_list)
 
 
 @app.route("/by", methods=["GET"])
@@ -38,7 +38,9 @@ def by_category():
     ]
 
     return render_template(
-        "category.html", category=category.capitalize(), manhwa_list=action_manhwas
+        "index.html",
+        title=f"{category.capitalize()} Manhwas",
+        manhwa_list=action_manhwas,
     )
 
 
