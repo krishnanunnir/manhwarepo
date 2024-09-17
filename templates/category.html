@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category }} Manhwas{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6 text-green-600">{{ category }} Manhwas</h1>
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <table class="w-full">
+            <thead>
+                <tr class="bg-green-500 text-white uppercase">
+                    <th class="py-3 px-4 text-left">Title</th>
+                    <th class="py-3 px-4 text-left">Author</th>
+                    <th class="py-3 px-4 text-left">Description</th>
+                    <th class="py-3 px-4 text-left">Categories</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for manhwa in manhwa_list %}
+                <tr class="hover:bg-gray-100">
+                    <td class="py-3 px-4">{{ manhwa.title }}</td>
+                    <td class="py-3 px-4">{{ manhwa.author }}</td>
+                    <td class="py-3 px-4">
+                        <p class="text-gray-600 italic">{{ manhwa.description }}</p>
+                    </td>
+                    <td class="py-3 px-4">
+                        <div class="flex flex-wrap gap-1">
+                            {% for tag in manhwa.categories %}
+                            <span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

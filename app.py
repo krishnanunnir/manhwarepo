@@ -24,6 +24,24 @@ def index():
     return render_template("index.html", manhwa_list=manhwa_list)
 
 
+@app.route("/by", methods=["GET"])
+def by_category():
+    category = request.args.get("category", "").capitalize()
+    response = supabase.table("Manhwa").select("*").execute()
+
+    # Get the data from the response
+    all_manhwas = response.data
+
+    # Filter manhwas with "Action" in their categories
+    action_manhwas = [
+        manhwa for manhwa in all_manhwas if category in manhwa.get("categories", [])
+    ]
+
+    return render_template(
+        "category.html", category=category.capitalize(), manhwa_list=action_manhwas
+    )
+
+
 @app.route("/api/search", methods=["GET"])
 def search_manhwa():
     title = request.args.get("title", "")
