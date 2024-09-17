@@ -41,6 +41,7 @@ markupsafe==2.1.5
 matplotlib-inline==0.1.7
 multidict==6.1.0
 nest-asyncio==1.6.0
+openai==1.45.0
 orjson==3.10.7
 packaging==24.1
 parso==0.8.4

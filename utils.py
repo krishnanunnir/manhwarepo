@@ -1,6 +1,9 @@
 import os
 from supabase import create_client, Client
 from dotenv import load_dotenv
+from pydantic import BaseModel, Field
+from typing import List
+from openai import OpenAI
 
 # Load environment variables
 load_dotenv()
@@ -11,6 +14,14 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 # Initialize Supabase client
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+client = OpenAI()
+
+
+class ManhwaList(BaseModel):
+    title: str = Field(description="The title of the manhwa list")
+    description: str = Field(description="A brief description of the manhwa list")
+    manhwas: List[str] = Field(description="A list of manhwa titles in the list")
 
 
 def create_manhwa_list(manhwa_names, list_title, list_description):
@@ -78,3 +89,32 @@ def get_manhwa_details_by_list_slug(list_slug):
     # Extract Manhwa details from the nested structure
     manhwa_list = response.data[0].get("Manhwa", [])
     return [item["Manhwa"] for item in manhwa_list if item["Manhwa"]]
+
+
+def get_manhwa_list_data_from_text(text):
+
+    completion = client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "Extract the event information."},
+            {
+                "role": "user",
+                "content": text,
+            },
+        ],
+        response_format=ManhwaList,
+    )
+
+    manhwa_data = completion.choices[0].message.parsed
+    return manhwa_data
+
+
+def create_manhwa_list_data_from_text(text):
+    # Get the manhwa list data from the text
+    manhwa_list_data = get_manhwa_list_data_from_text(text)
+
+    # Create a new list in the database
+    list_id = create_manhwa_list(
+        manhwa_list_data.manhwas, manhwa_list_data.title, manhwa_list_data.description
+    )
+    return list_id

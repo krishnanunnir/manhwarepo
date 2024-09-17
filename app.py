@@ -5,7 +5,11 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 from dotenv import load_dotenv
 from flask import Flask, jsonify, make_response, render_template, request
 from supabase import Client, create_client
-from utils import create_manhwa_list, get_manhwa_details_by_list_slug
+from utils import (
+    create_manhwa_list,
+    get_manhwa_details_by_list_slug,
+    create_manhwa_list_data_from_text,
+)
 
 # Load environment variables
 load_dotenv()
@@ -107,6 +111,19 @@ def create_list():
 
     try:
         list_id = create_manhwa_list(manhwa_names, list_title, list_description)
+        return jsonify({"success": True, "list_id": list_id}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/create-list-from-text", methods=["POST"])
+def create_list_from_text():
+    text = request.json.get("text")
+    if not text:
+        return jsonify({"error": "Text is required in the request body"}), 400
+
+    try:
+        list_id = create_manhwa_list_data_from_text(text)
         return jsonify({"success": True, "list_id": list_id}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
