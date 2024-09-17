@@ -26,7 +26,7 @@
                     <td class="py-3 px-4">
                         <div class="flex flex-wrap gap-1">
                             {% for tag in manhwa.categories %}
-                            <a href="/by?category={{ tag }}" class="bg-green-500 text-white text-xs px-2 py-1 rounded-full hover:bg-green-600 transition duration-300">{{ tag }}</a>
+                            <a href="/category/{{ tag|lower|replace(' ', '_') }}" class="bg-green-500 text-white text-xs px-2 py-1 rounded-full hover:bg-green-600 transition duration-300">{{ tag }}</a>
                             {% endfor %}
                         </div>
                     </td>

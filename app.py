@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request, jsonify
-from supabase import create_client, Client
-from dotenv import load_dotenv
 import os
-from flask import make_response
-from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom import minidom
+from xml.etree.ElementTree import Element, SubElement, tostring
+
+from dotenv import load_dotenv
+from flask import Flask, jsonify, make_response, render_template, request
+from supabase import Client, create_client
 
 # Load environment variables
 load_dotenv()
@@ -29,7 +29,10 @@ def index():
 
 @app.route("/category/<string:category>")
 def by_category(category):
-    category = category.capitalize()
+
+    category = " ".join(
+        word.capitalize() for word in category.replace("_", " ").split()
+    )
     response = supabase.table("Manhwa").select("*").execute()
 
     # Get the data from the response
@@ -80,7 +83,8 @@ def sitemap():
     for category in categories:
         url = SubElement(root, "url")
         loc = SubElement(url, "loc")
-        loc.text = f"{request.url_root}category/{category}"
+        no_space_category = category.replace(" ", "_").lower()
+        loc.text = f"{request.url_root}category/{no_space_category}"
 
     # Create the XML string
     xml_string = minidom.parseString(tostring(root)).toprettyxml(indent="  ")
