@@ -56,14 +56,14 @@ def create_manhwa_list(manhwa_names, list_title, list_description):
         .execute()
     )
     list_id = list_response.data[0]["id"]
-
+    list_slug = list_response.data[0]["slug"]
     # Link manhwa to the new list
     for manhwa in manhwa_data:
         supabase.table("ListManhwa").insert(
             {"list": list_id, "manhwa": manhwa["id"]}
         ).execute()
 
-    return list_id
+    return list_slug
 
 
 def get_manhwa_details_by_list_slug(list_slug):
@@ -114,7 +114,7 @@ def create_manhwa_list_data_from_text(text):
     manhwa_list_data = get_manhwa_list_data_from_text(text)
 
     # Create a new list in the database
-    list_id = create_manhwa_list(
+    list_slug = create_manhwa_list(
         manhwa_list_data.manhwas, manhwa_list_data.title, manhwa_list_data.description
     )
-    return list_id
+    return list_slug
