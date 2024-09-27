@@ -3,7 +3,14 @@ from xml.dom import minidom
 from xml.etree.ElementTree import Element, SubElement, tostring
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, make_response, render_template, request
+from flask import (
+    Flask,
+    jsonify,
+    make_response,
+    render_template,
+    request,
+    send_from_directory,
+)
 from supabase import Client, create_client
 from utils import (
     create_manhwa_list,
@@ -31,7 +38,7 @@ def index():
     # Render the template with the fetched data
     return render_template(
         "index.html",
-        title="Manhwa",
+        title="All Manhwas",
         description="List of all Manhwas",
         manhwa_list=manhwa_list,
     )
@@ -152,6 +159,15 @@ def render_by_list_slug(list_slug):
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template("404.html"), 404
+
+
+@app.route("/favicon.ico")
+def favicon():
+    return send_from_directory(
+        os.path.join(app.root_path, "static"),
+        "favicon.svg",
+        mimetype="image/vnd.microsoft.icon",
+    )
 
 
 if __name__ == "__main__":
