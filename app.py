@@ -29,7 +29,12 @@ def index():
     manhwa_list = response.data
 
     # Render the template with the fetched data
-    return render_template("index.html", title="Manhwa", manhwa_list=manhwa_list)
+    return render_template(
+        "index.html",
+        title="Manhwa",
+        description="List of all Manhwas",
+        manhwa_list=manhwa_list,
+    )
 
 
 @app.route("/category/<string:category>")
@@ -51,6 +56,7 @@ def by_category(category):
     return render_template(
         "index.html",
         title=f"{category} Manhwas",
+        description=f"List of all {category} Manhwas",
         manhwa_list=filtered_manhwas,
     )
 

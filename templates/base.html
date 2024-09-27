@@ -3,7 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}Discover and explore a vast collection of Manhwa titles at our repository.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}manhwa, korean comics, webtoons, manga{% endblock %}">
+    <meta name="author" content="ManhwaRepo">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
     <title>{% block title %}Manhwa Repository{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.tailwindcss.com">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="{% block og_title %}Manhwa Repo{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Discover and explore a vast collection of Manhwa titles at our repository.{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{% static 'images/og-image.jpg' %}{% endblock %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:type" content="website">
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
@@ -24,7 +38,16 @@
     {% block extra_head %}{% endblock %}
     {% block extra_css %}{% endblock %}
 </head>
-<body class="bg-gray-100 p-5">
-    {% block content %}{% endblock %}
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <header class="bg-white shadow mb-6">
+        <!-- Add your header content here -->
+    </header>
+    <main class="flex-grow container mx-auto px-4">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="bg-white shadow mt-6 py-4">
+        <!-- Add your footer content here -->
+    </footer>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
