@@ -189,7 +189,7 @@ def favicon():
 
 @app.route("/blogs")
 def list_blogs():
-    response = supabase.table("Blog").select("id,title").execute()
+    response = supabase.table("Blog").select("id,title,created_at").execute()
     blogs = response.data
     for blog in blogs:
         blog["slug"] = slugify(blog["title"])
@@ -212,7 +212,7 @@ def view_blog(blog_id, slug):
             url_for("view_blog", blog_id=blog_id, slug=slugify(blog["title"]))
         )
 
-    return render_template("blog_post.html", blog=blog)
+    return render_template("blog_post.html", blog=blog, title=blog["title"])
 
 
 if __name__ == "__main__":
