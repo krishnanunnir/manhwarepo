@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6 text-green-600">Blog Posts</h1>
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <ul class="divide-y divide-gray-200">
+            {% for blog in blogs %}
+            <li class="hover:bg-gray-100 transition duration-300 leading-relaxed">
+                <a href="{{ url_for('view_blog', blog_id=blog.id, slug=blog.slug) }}" class="block p-4">
+                    <h2 class="text-xl font-semibold text-green-600 mb-2">{{ blog.title }}</h2>
+                    <p class="text-gray-600 text-sm">Published on: {{ blog.date }}</p>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

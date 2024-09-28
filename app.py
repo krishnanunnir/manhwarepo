@@ -10,6 +10,8 @@ from flask import (
     render_template,
     request,
     send_from_directory,
+    redirect,
+    url_for,
 )
 from supabase import Client, create_client
 from utils import (
@@ -17,6 +19,8 @@ from utils import (
     get_manhwa_details_by_list_slug,
     create_manhwa_list_data_from_text,
 )
+from markdown import markdown
+from slugify import slugify
 
 # Load environment variables
 load_dotenv()
@@ -104,6 +108,19 @@ def sitemap():
         no_space_category = category.replace(" ", "_").lower()
         loc.text = f"{request.url_root}category/{no_space_category}"
 
+    # Add blog list page
+    url = SubElement(root, "url")
+    loc = SubElement(url, "loc")
+    loc.text = f"{request.url_root}blogs"
+
+    # Add individual blog pages
+    blog_response = supabase.table("Blog").select("id,title").execute()
+    for blog in blog_response.data:
+        url = SubElement(root, "url")
+        loc = SubElement(url, "loc")
+        slug = slugify(blog["title"])
+        loc.text = f"{request.url_root}blog/{blog['id']}/{slug}"
+
     # Create the XML string
     xml_string = minidom.parseString(tostring(root)).toprettyxml(indent="  ")
 
@@ -168,6 +185,34 @@ def favicon():
         "favicon.svg",
         mimetype="image/vnd.microsoft.icon",
     )
+
+
+@app.route("/blogs")
+def list_blogs():
+    response = supabase.table("Blog").select("id,title").execute()
+    blogs = response.data
+    for blog in blogs:
+        blog["slug"] = slugify(blog["title"])
+    return render_template("blog_list.html", blogs=blogs)
+
+
+@app.route("/blog/<int:blog_id>/<string:slug>")
+def view_blog(blog_id, slug):
+    response = supabase.table("Blog").select("*").eq("id", blog_id).execute()
+    if not response.data:
+        return render_template("404.html"), 404
+
+    blog = response.data[0]
+    blog["content"] = markdown(blog["content"])
+
+    # Check if the provided slug matches the blog title
+    if slugify(blog["title"]) != slug:
+        # If it doesn't match, redirect to the correct URL
+        return redirect(
+            url_for("view_blog", blog_id=blog_id, slug=slugify(blog["title"]))
+        )
+
+    return render_template("blog_post.html", blog=blog)
 
 
 if __name__ == "__main__":
